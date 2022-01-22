@@ -451,7 +451,7 @@ To make the process efficient, Bitcoin relies on a C++ map [`mapOrphanTransactio
 Other algorithmic complexity issues in Bitcoin include [quadratic complexity run times](https://bitslog.wordpress.com/2017/04/17/new-quadratic-delays-in-bitcoin-scripts/#comment-13027) in Bitcoin scripting language and transactions that take [five hours](https://bitslog.wordpress.com/2017/01/08/a-bitcoin-transaction-that-takes-5-hours-to-verify/) to verify. 
 
 
-# 11. Other blockchain client implementation level issues
+# Other blockchain client implementation level issues
 
 **P2P network bandwidth exhaustion/spam:** It should not be possible for nodes inside a P2P network to get the network to relay meaningless bloat data, as this would impact the legitimate block and transaction propagation speeds. Even more so, meaningless data should not be stored, to avoid network-wide storage exhaustion problems.
 
