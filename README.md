@@ -29,8 +29,6 @@ This paper is aimed at security testers assessing blockchain implementations and
 
 10. [CPU exhaustion in block or transaction processing](README.md#cpu-exhaustion-in-block-or-tx-processing)
 
-11. [Other blockchain client implementation level issues](README.md#other-blockchain-client-implementation-level-issues) 
-
 This paper assumes a basic understanding of blockchain and aims to provide a "top 10"-style bug class list. For those unfamiliar with blockchain and starting out in this area, good initial references can be found in the [Bitcoin developer guide](https://bitcoin.org/en/blockchain-guide) and a free book, such as [this one](https://github.com/bitcoinbook/bitcoinbook).  After reading the materials linked to in the sections below, a researcher should be well-equipped to start auditing non-Bitcoin blockchain software (though the end result may be bugs outside of this paper's list). 
 
 One of the most interesting bug classes in blockchain are netsplit attacks, discussed in the first section below. 
