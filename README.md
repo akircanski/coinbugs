@@ -9,25 +9,25 @@ Many of the bugs mentioned below were first found and documented by the Bitcoin 
 
 This paper is aimed at security testers assessing blockchain implementations and also blockchain developers as a reference on common pitfalls. Blockchain, as designed by the Satoshi's paper is exciting and introduces several novel bug classes which are interesting to security researchers. As mentioned previously, smart contract level issues are excluded from the scope of this paper. The following bug types are discussed in the sections below:
 
-1. [Netsplit due to multiple client implementations](README.md#netsplit-due-to-multiple-client-implementations)
+1. [Netsplit due to multiple client implementations](https://github.com/akircanski/coinbugs/blob/main/README.md#1-netsplit-due-to-multiple-client-implementations)
 
-2. [Netsplit due to execution environment discrepancies](README.md#netsplit-due-to-execution-environment-discrepancies)
+2. [Netsplit due to execution environment discrepancies](https://github.com/akircanski/coinbugs/blob/main/README.md#2-netsplit-due-to-execution-environment-discrepancies)
 
-3. [Netsplit via block hash poisoning](README.md#netsplit-via-block-hash-poisoning)
+3. [Netsplit via block hash poisoning](https://github.com/akircanski/coinbugs/blob/main/README.md#3-netsplit-via-block-hash-poisoning)
 
-4. [Netsplit via unintended or pre-mature fork](README.md#netsplit-via-unintended-or-pre-mature-fork)
+4. [Netsplit via unintended or pre-mature fork](https://github.com/akircanski/coinbugs/blob/main/README.md#4-netsplit-via-unintended-or-pre-mature-fork)
 
-5. [Netsplit via branch confusion](README.md#netsplit-via-branch-confusion)
+5. [Netsplit via branch confusion](https://github.com/akircanski/coinbugs/blob/main/README.md#5-netsplit-via-branch-confusion)
 
-6. [Improper timestamp validation](README.md#improper-timestamp-validation)
+6. [Improper timestamp validation](https://github.com/akircanski/coinbugs/blob/main/README.md#6-improper-timestamp-validation)
 
-7. [Integer underflow/overflow](README.md#integer-underflowoverflow)
+7. [Integer underflow/overflow](https://github.com/akircanski/coinbugs/blob/main/README.md#7-integer-underflowoverflow)
 
-8. [Merkle tree implementation issues](README.md#merkle-tree-implementation-issues)
+8. [Merkle tree implementation issues](https://github.com/akircanski/coinbugs/blob/main/README.md#8-merkle-tree-implementation-issues)
 
-9. [Storage exhaustion in block or transaction processing](README.md#storage-exhaustion-in-block-or-transaction-processing)
+9. [Storage exhaustion in block or transaction processing](https://github.com/akircanski/coinbugs/blob/main/README.md#9-storage-exhaustion-in-block-or-transaction-processing)
 
-10. [CPU exhaustion in block or transaction processing](README.md#cpu-exhaustion-in-block-or-tx-processing)
+10. [CPU exhaustion in block or transaction processing](https://github.com/akircanski/coinbugs/blob/main/README.md#10-cpu-exhaustion-in-block-or-transaction-processing)
 
 This paper assumes a basic understanding of blockchain and aims to provide a "top 10"-style bug class list. For those unfamiliar with blockchain and starting out in this area, good initial references can be found in the [Bitcoin developer guide](https://bitcoin.org/en/blockchain-guide) and a free book, such as [this one](https://github.com/bitcoinbook/bitcoinbook).  After reading the materials linked to in the sections below, a researcher should be well-equipped to start auditing non-Bitcoin blockchain software (though the end result may be bugs outside of this paper's list). 
 
