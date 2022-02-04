@@ -13,9 +13,9 @@ This paper is aimed at security testers assessing blockchain implementations and
 
 2. [Netsplit due to execution environment discrepancies](https://github.com/akircanski/coinbugs/blob/main/README.md#2-netsplit-due-to-execution-environment-discrepancies)
 
-3. [Netsplit via unintended or pre-mature fork](https://github.com/akircanski/coinbugs/blob/main/README.md#4-netsplit-via-unintended-or-pre-mature-fork)
+3. [Netsplit via unintended or pre-mature fork](https://github.com/akircanski/coinbugs/blob/main/README.md#3-netsplit-via-unintended-or-pre-mature-fork)
 
-4. [Netsplit via block hash poisoning](https://github.com/akircanski/coinbugs/blob/main/README.md#3-netsplit-via-block-hash-poisoning)
+4. [Netsplit via block hash poisoning](https://github.com/akircanski/coinbugs/blob/main/README.md#4-netsplit-via-block-hash-poisoning)
 
 5. [Netsplit via branch confusion](https://github.com/akircanski/coinbugs/blob/main/README.md#5-netsplit-via-branch-confusion)
 
