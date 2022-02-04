@@ -13,9 +13,9 @@ This paper is aimed at security testers assessing blockchain implementations and
 
 2. [Netsplit due to execution environment discrepancies](https://github.com/akircanski/coinbugs/blob/main/README.md#2-netsplit-due-to-execution-environment-discrepancies)
 
-3. [Netsplit via block hash poisoning](https://github.com/akircanski/coinbugs/blob/main/README.md#3-netsplit-via-block-hash-poisoning)
+3. [Netsplit via unintended or pre-mature fork](https://github.com/akircanski/coinbugs/blob/main/README.md#4-netsplit-via-unintended-or-pre-mature-fork)
 
-4. [Netsplit via unintended or pre-mature fork](https://github.com/akircanski/coinbugs/blob/main/README.md#4-netsplit-via-unintended-or-pre-mature-fork)
+4. [Netsplit via block hash poisoning](https://github.com/akircanski/coinbugs/blob/main/README.md#3-netsplit-via-block-hash-poisoning)
 
 5. [Netsplit via branch confusion](https://github.com/akircanski/coinbugs/blob/main/README.md#5-netsplit-via-branch-confusion)
 
@@ -134,35 +134,7 @@ may or may not validate depending on the platform the node is running on, result
 A blockchain client implementation should be as independent from the execution environment as possible. Reviewing for this type of bug includes  verifying whether the client fixes external software versions/commits, properly handling 32-bit and 64-bit discrepancies, any dependence on how operating system's system calls are implemented, whether locale differences play a role in consensus related code, etc. 
 
 
-## 3. Netsplit via block hash poisoning
-
-When a new block or a transaction is processed by a client, its hash is looked up in the client's store of already known block hashes. 
-If the hash turns out to be known, the payload may be discarded, as it is assumed it was already processed. This is an optimization 
-which prevents a single payload from being processed multiple times in a P2P network setting. 
-
-It is important to note that the block or the transaction in question may have been invalid and rejected; regardless, its hash may be
-recorded as already processed. As such, if a malicious participant manages to *invalidate* a legitimate block *without* modifying its hash, 
-it becomes unclear what block the hash pertains to: the valid or the invalid one. To exploit this, a malicious participant without mining 
-capabilities may listen on the network for newly mined blocks and attempt to quickly broadcast an invalidated variant of the same block.
-The nodes that receive the invalidated block first will reject the actual truly valid block later on. The nodes that received the valid
-block first will correctly accept the block, leading to a netsplit condition. 
-
-Possible ways to invalidate a block without modifying its hash include:
-
-* If the *overall hashing method* is vulnerable to a second pre-image attack. To clarify: it is assumed that the hash function (such as SHA-256) is resistant to second pre-image forgery, however, the overall hashing method includes data serialization, combining multi-field data and/or padding and these may render the construction less resistant to second pre-imaging. 
-* If there exists a block/transaction field, not included in the hash, but relevant for the validity decision. Such a parameter could be trivially modified to affect the block validity without changing its hash
-
-As an example of the second-preimage problem on a block's hash, see Bitcoin's CVE-2012-2459. Consider how a block hash is derived. It is in fact a hash of the block header fields. The block header fields need to be combined together into a byte string and one of the fields is the Merkle root of the transaction set. When it comes to the transaction set, it is probable that the number of transactions will not correspond to a full binary tree leaf set (the number will likely be different than `2^k` for some `k`). As such, the transaction set needs to be padded to complete the tree computation. The padding used in Bitcoin rendered this vulnerable to an [attack](https://bitcointalk.org/index.php?topic=102395.0):
-
->The Merkle hash implementation that Bitcoin uses to calculate the Merkle root in a block header is flawed in that one can easily construct multiple lists of hashes that map to the same Merkle root. For example, merkle_hash([a, b, c]) and merkle_hash([a, b, c, c]) yield the same result. This is because, at every iteration, the Merkle hash function pads its intermediate list of hashes with the last hash if the list is of odd length, in order to make it of even length.
->
->And so, the Merkle root function can be effectively preimaged by changing the input so that one of the intermediate lists is of even length with the last two elements equal (where originally it was of odd length with a last element equal to the earlier mentioned two). As was later noted, this extends to any input length that is not a power of two: merkle_hash([a, b, c, d, e, f]) == merkle_hash([a, b, c, d, e, f, e, f]). Note that to maintain the same root hash, the only flexibility that exists is duplication of elements.
->
->As a result, two blocks can easily be created that have the same block hash, though one can be valid and the other invalid, by duplicating one or more of the transactions in a way that maintains the Merkle root hash. Duplicating any transaction will make the block invalid, since the block double spends a certain past transaction output.
-
-Even though the underlying hash function is second preimage-resistant, it was still possible to second-preimage the construction. When validating an implementation for this type of bug, the question is whether it's possible to make a node consider a block invalid without changing the legitimate block's hash. Another issue that may make the hashing method vulnerable to collisions is the ambiguous serialization, see e.g. this old bug in [AWS](https://www.daemonology.net/blog/2008-12-18-AWS-signature-version-1-is-insecure.html). The question is whether there are collisions in operations that precede the actual hashing. 
-	
-## 4. Netsplit via unintended or pre-mature fork
+## 3. Netsplit via unintended or pre-mature fork
 
 Suppose a blockchain client is scheduled for an upgrade and suppose there's a PR (pull request) that implements the change. 
 When reviewing such a PR, there are two options when it comes to what it claims:
@@ -231,6 +203,34 @@ The upgrade introduced a novel script operator, but relied on legacy code to det
 
 To review for this type of issue, consider whether legacy data structures or functions are used in upgraded code and vice-versa, whether the newly introduced code and data structure changes affect the old rules in any way.
 
+## 4. Netsplit via block hash poisoning
+
+When a new block or a transaction is processed by a client, its hash is looked up in the client's store of already known block hashes. 
+If the hash turns out to be known, the payload may be discarded, as it is assumed it was already processed. This is an optimization 
+which prevents a single payload from being processed multiple times in a P2P network setting. 
+
+It is important to note that the block or the transaction in question may have been invalid and rejected; regardless, its hash may be
+recorded as already processed. As such, if a malicious participant manages to *invalidate* a legitimate block *without* modifying its hash, 
+it becomes unclear what block the hash pertains to: the valid or the invalid one. To exploit this, a malicious participant without mining 
+capabilities may listen on the network for newly mined blocks and attempt to quickly broadcast an invalidated variant of the same block.
+The nodes that receive the invalidated block first will reject the actual truly valid block later on. The nodes that received the valid
+block first will correctly accept the block, leading to a netsplit condition. 
+
+Possible ways to invalidate a block without modifying its hash include:
+
+* If the *overall hashing method* is vulnerable to a second pre-image attack. To clarify: it is assumed that the hash function (such as SHA-256) is resistant to second pre-image forgery, however, the overall hashing method includes data serialization, combining multi-field data and/or padding and these may render the construction less resistant to second pre-imaging. 
+* If there exists a block/transaction field, not included in the hash, but relevant for the validity decision. Such a parameter could be trivially modified to affect the block validity without changing its hash
+
+As an example of the second-preimage problem on a block's hash, see Bitcoin's CVE-2012-2459. Consider how a block hash is derived. It is in fact a hash of the block header fields. The block header fields need to be combined together into a byte string and one of the fields is the Merkle root of the transaction set. When it comes to the transaction set, it is probable that the number of transactions will not correspond to a full binary tree leaf set (the number will likely be different than `2^k` for some `k`). As such, the transaction set needs to be padded to complete the tree computation. The padding used in Bitcoin rendered this vulnerable to an [attack](https://bitcointalk.org/index.php?topic=102395.0):
+
+>The Merkle hash implementation that Bitcoin uses to calculate the Merkle root in a block header is flawed in that one can easily construct multiple lists of hashes that map to the same Merkle root. For example, merkle_hash([a, b, c]) and merkle_hash([a, b, c, c]) yield the same result. This is because, at every iteration, the Merkle hash function pads its intermediate list of hashes with the last hash if the list is of odd length, in order to make it of even length.
+>
+>And so, the Merkle root function can be effectively preimaged by changing the input so that one of the intermediate lists is of even length with the last two elements equal (where originally it was of odd length with a last element equal to the earlier mentioned two). As was later noted, this extends to any input length that is not a power of two: merkle_hash([a, b, c, d, e, f]) == merkle_hash([a, b, c, d, e, f, e, f]). Note that to maintain the same root hash, the only flexibility that exists is duplication of elements.
+>
+>As a result, two blocks can easily be created that have the same block hash, though one can be valid and the other invalid, by duplicating one or more of the transactions in a way that maintains the Merkle root hash. Duplicating any transaction will make the block invalid, since the block double spends a certain past transaction output.
+
+Even though the underlying hash function is second preimage-resistant, it was still possible to second-preimage the construction. When validating an implementation for this type of bug, the question is whether it's possible to make a node consider a block invalid without changing the legitimate block's hash. Another issue that may make the hashing method vulnerable to collisions is the ambiguous serialization, see e.g. this old bug in [AWS](https://www.daemonology.net/blog/2008-12-18-AWS-signature-version-1-is-insecure.html). The question is whether there are collisions in operations that precede the actual hashing. 
+	
 ## 5. Netsplit via branch confusion
 
 Even though at each moment only one chain of blocks is considered authoritative, PoW-based blockchain clients typically keep track of the full *block tree*. The block tree represents all possible ledger states the client knows about. When a new block is processed, if it connects to a non-authoritative branch of the block tree, the client needs to temporarily switch to that particular side branch, adopt that branches' transaction dataset and process the new block under those terms. 
