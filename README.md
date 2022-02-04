@@ -96,6 +96,13 @@ Another example from 2013 is a failure of the `bitcoin-ruby` reimplementation cl
 >
 >The thing is, that's not actually an error. SignatureHash() returns the hash of the signature, and CheckSig() doesn't check the return code, so it acts as though the hash the signature signed was 0000000000000000000000000000000000000000000000000000000000000001 You can create a signature for that, and it works just fine and the transaction is considered valid.
 
+[CVE-2021-39137](https://github.com/ethereum/go-ethereum/blob/master/docs/postmortems/2021-08-22-split-postmortem.md) is an interesting
+`go-ethereum` bug identified by Guido Vranken. The `go-ethereum` client had erroneous computation due to specifics
+on how Golang handles slices. Other Ethereum did not implement this erroneous computation and as such the bug caused
+a netsplit in the Ethereum network. It essentially results from the ability to have a mutable and non-mutable slice referencing
+the same chunk of memory. 
+
+
 If a single implementation behaves in an unexpected or unreasonable way for a certain edge case when processing a transaction or a block, such behavior is a candidate: the other implementation may perform a reasonable action in that same case, resulting in a difference in behavior. Manual comparison of the source code of multiple implementations, creating input tests to compare how the two implementations react and using cross-implementation fuzzing techniques are all good ways to identify bugs of this type. 
 
 ## 2. Netsplit due to execution environment discrepancies
