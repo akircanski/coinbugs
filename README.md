@@ -140,6 +140,7 @@ may or may not validate depending on the platform the node is running on, result
 
 A blockchain client implementation should be as independent from the execution environment as possible. Reviewing for this type of bug includes  verifying whether the client fixes external software versions/commits, properly handling 32-bit and 64-bit discrepancies, any dependence on how operating system's system calls are implemented, whether locale differences play a role in consensus related code, etc. 
 
+See a CosmWASM [bug](https://github.com/CosmWasm/cosmwasm/pull/1194/commits/44fb71e0384de11408cedf86b31dcce2f75ce472) from 2022, where a system-dependent error message could affect consensus (CWA-2021-003). 
 
 ## 3. Netsplit via unintended or pre-mature fork
 
